@@ -1,4 +1,4 @@
 package co.edu.uniquindio.poo.Model;
 
-public enum EstadoEntrenamiento {
+public class SmartGym {
 }
