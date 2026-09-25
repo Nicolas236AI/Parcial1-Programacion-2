@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox spacing="15" style="-fx-background-color: #040607; -fx-padding: 20px;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <Label text="Módulo de Inscripciones y Facturación" style="-fx-text-fill: #BF40FA; -fx-font-size: 20px; -fx-font-weight: bold;" />
+
+    <GridPane hgap="20" vgap="12" style="-fx-background-color: #5B2A62; -fx-padding: 20px; -fx-background-radius: 12px;">
+        <columnConstraints>
+            <ColumnConstraints minWidth="180" prefWidth="180" />
+            <ColumnConstraints hgrow="ALWAYS" minWidth="260" />
+        </columnConstraints>
+        <children>
+            <Label text="Código Inscripción:" style="-fx-text-fill: #E3D9FC; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <TextField promptText="INS-001" maxWidth="1.7976931348623157E308" style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-padding: 8px;" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+            <Label text="Seleccionar Cliente:" style="-fx-text-fill: #E3D9FC; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <ComboBox promptText="Buscar cliente..." maxWidth="1.7976931348623157E308" style="-fx-background-color: #040607; -fx-padding: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+            <Label text="Seleccionar Plan:" style="-fx-text-fill: #E3D9FC; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+            <ComboBox promptText="Plan de entrenamiento..." maxWidth="1.7976931348623157E308" style="-fx-background-color: #040607; -fx-padding: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+            <Label text="Asignar Entrenador:" style="-fx-text-fill: #E3D9FC; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+            <ComboBox promptText="Entrenador disponible..." maxWidth="1.7976931348623157E308" style="-fx-background-color: #040607; -fx-padding: 4px;" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+            <Label text="Servicios Adicionales:" style="-fx-text-fill: #E3D9FC; -fx-font-weight: bold;" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+            <ListView prefHeight="90" minHeight="90" maxWidth="1.7976931348623157E308" style="-fx-background-color: #040607; -fx-control-inner-background: #040607;" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        </children>
+    </GridPane>
+
+    <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-background-color: #5B2A62; -fx-padding: 15px 20px; -fx-background-radius: 12px;">
+        <Label text="Valor Total a Pagar:" style="-fx-text-fill: #BF40FA; -fx-font-size: 15px; -fx-font-weight: bold;" />
+        <Label text="\$0.00" style="-fx-text-fill: #E3D9FC; -fx-font-size: 16px; -fx-font-weight: bold;" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="Confirmar Inscripción" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-font-size: 14px; -fx-background-radius: 6px; -fx-padding: 8px 18px; -fx-cursor: hand;" />
+    </HBox>
+</VBox>

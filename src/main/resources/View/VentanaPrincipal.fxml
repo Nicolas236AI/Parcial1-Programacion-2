@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="mainBorderPane" style="-fx-background-color: #040607;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.ViewController.VentanaPrincipalViewController">
+    <left>
+        <VBox spacing="15" style="-fx-background-color: #5B2A62; -fx-padding: 20px; -fx-pref-width: 250px;">
+            <Label style="-fx-text-fill: #BF40FA; -fx-font-size: 24px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI';" text="SmartGym" />
+            <Label style="-fx-text-fill: #E3D9FC; -fx-font-size: 12px; -fx-opacity: 0.8;" text="Panel de Control" />
+            <Separator style="-fx-background-color: #4928C2;" />
+            <Button onAction="#onMostrarDashboard" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-alignment: CENTER_LEFT; -fx-font-weight: bold; -fx-pref-width: Infinity; -fx-padding: 10px; -fx-background-radius: 8px;" text=" Dashboard" />
+            <Button onAction="#onMostrarClientes" style="-fx-background-color: transparent; -fx-text-fill: #E3D9FC; -fx-alignment: CENTER_LEFT; -fx-pref-width: Infinity; -fx-padding: 10px; -fx-cursor: hand;" text=" Gestión de Clientes" />
+            <Button onAction="#onMostrarEntrenadores" style="-fx-background-color: transparent; -fx-text-fill: #E3D9FC; -fx-alignment: CENTER_LEFT; -fx-pref-width: Infinity; -fx-padding: 10px; -fx-cursor: hand;" text=" Entrenadores" />
+            <Button onAction="#onMostrarPlanes" style="-fx-background-color: transparent; -fx-text-fill: #E3D9FC; -fx-alignment: CENTER_LEFT; -fx-pref-width: Infinity; -fx-padding: 10px; -fx-cursor: hand;" text=" Planes" />
+            <Button onAction="#onMostrarServicios" style="-fx-background-color: transparent; -fx-text-fill: #E3D9FC; -fx-alignment: CENTER_LEFT; -fx-pref-width: Infinity; -fx-padding: 10px; -fx-cursor: hand;" text=" Servicios Adicionales" />
+            <Button onAction="#onMostrarInscripciones" style="-fx-background-color: transparent; -fx-text-fill: #E3D9FC; -fx-alignment: CENTER_LEFT; -fx-pref-width: Infinity; -fx-padding: 10px; -fx-cursor: hand;" text=" Inscripciones" />
+            <Button onAction="#onMostrarReportes" style="-fx-background-color: transparent; -fx-text-fill: #E3D9FC; -fx-alignment: CENTER_LEFT; -fx-pref-width: Infinity; -fx-padding: 10px; -fx-cursor: hand;" text=" Reportes y Consultas" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Label style="-fx-text-fill: #E3D9FC; -fx-font-size: 10px; -fx-opacity: 0.6;" text="NIT: 900.123.456-7&#10;Armenia, Quindío" />
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="25" style="-fx-background-color: #040607; -fx-padding: 30px;">
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #5B2A62; -fx-padding: 20px; -fx-background-radius: 12px;">
+                <VBox spacing="4">
+                    <Label style="-fx-text-fill: #BF40FA; -fx-font-size: 22px; -fx-font-weight: bold;" text="Bienvenido al Sistema SmartGym" />
+                    <Label style="-fx-text-fill: #E3D9FC; -fx-font-size: 13px;" text="Seleccione un módulo en la barra lateral o gestione las tarjetas rápidas." />
+                </VBox>
+            </HBox>
+            <GridPane hgap="20" vgap="20">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.33" />
+                    <ColumnConstraints percentWidth="33.33" />
+                    <ColumnConstraints percentWidth="33.33" />
+                </columnConstraints>
+                <VBox spacing="10" style="-fx-background-color: #5B2A62; -fx-padding: 20px; -fx-background-radius: 10px;" GridPane.columnIndex="0">
+                    <Label style="-fx-text-fill: #E3D9FC; -fx-font-size: 14px;" text="Clientes Activos" />
+                    <Label style="-fx-text-fill: #BF40FA; -fx-font-size: 28px; -fx-font-weight: bold;" text="142" />
+                    <Button onAction="#onMostrarClientes" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-cursor: hand;" text="Gestionar Clientes" />
+                </VBox>
+                <VBox spacing="10" style="-fx-background-color: #5B2A62; -fx-padding: 20px; -fx-background-radius: 10px;" GridPane.columnIndex="1">
+                    <Label style="-fx-text-fill: #E3D9FC; -fx-font-size: 14px;" text="Entrenadores" />
+                    <Label style="-fx-text-fill: #BF40FA; -fx-font-size: 28px; -fx-font-weight: bold;" text="12" />
+                    <Button onAction="#onMostrarEntrenadores" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-cursor: hand;" text="Ver Entrenadores" />
+                </VBox>
+                <VBox spacing="10" style="-fx-background-color: #5B2A62; -fx-padding: 20px; -fx-background-radius: 10px;" GridPane.columnIndex="2">
+                    <Label style="-fx-text-fill: #E3D9FC; -fx-font-size: 14px;" text="Inscripciones Mes" />
+                    <Label style="-fx-text-fill: #BF40FA; -fx-font-size: 28px; -fx-font-weight: bold;" text="38" />
+                    <Button onAction="#onMostrarInscripciones" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-cursor: hand;" text="Nueva Inscripción" />
+                </VBox>
+                <rowConstraints>
+                    <RowConstraints />
+                </rowConstraints>
+            </GridPane>
+        </VBox>
+    </center>
+</BorderPane>

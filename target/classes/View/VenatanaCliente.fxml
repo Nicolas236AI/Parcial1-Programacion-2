@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<HBox spacing="20" style="-fx-background-color: #040607; -fx-padding: 20px;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox minWidth="320" prefWidth="320" style="-fx-background-color: #5B2A62; -fx-padding: 20px; -fx-background-radius: 12px;" spacing="12">
+        <Label text="Administración de Clientes" style="-fx-text-fill: #BF40FA; -fx-font-size: 18px; -fx-font-weight: bold;" />
+        <TextField promptText="Nombre Completo" style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-padding: 8px;" />
+        <TextField promptText="Documento de Identidad" style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-padding: 8px;" />
+        <TextField promptText="Teléfono" style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-padding: 8px;" />
+        <TextField promptText="Correo Electrónico" style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-padding: 8px;" />
+        <TextField promptText="Edad" style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-padding: 8px;" />
+        <DatePicker promptText="Fecha de Registro" style="-fx-pref-width: Infinity;" />
+        <Region VBox.vgrow="ALWAYS" />
+        <HBox spacing="8" alignment="CENTER">
+            <Button text="Registrar" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="80" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-padding: 8px 4px; -fx-cursor: hand;" />
+            <Button text="Modificar" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="80" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-padding: 8px 4px; -fx-cursor: hand;" />
+            <Button text="Eliminar" HBox.hgrow="ALWAYS" maxWidth="Infinity" minWidth="80" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 6px; -fx-padding: 8px 4px; -fx-cursor: hand;" />
+        </HBox>
+    </VBox>
+    <VBox style="-fx-background-color: #040607;" spacing="12" HBox.hgrow="ALWAYS">
+        <TextField promptText="🔍 Buscar cliente..." style="-fx-background-color: #5B2A62; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #E3D9FC; -fx-background-radius: 6px; -fx-padding: 8px;" />
+        <TableView fx:id="tableClientes" style="-fx-background-color: #040607; -fx-table-cell-border-color: #5B2A62;" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn text="Nombre" prefWidth="120" />
+                <TableColumn text="Documento" prefWidth="90" />
+                <TableColumn text="Teléfono" prefWidth="80" />
+                <TableColumn text="Correo" prefWidth="120" />
+                <TableColumn text="Edad" prefWidth="50" />
+            </columns>
+        </TableView>
+    </VBox>
+</HBox>
