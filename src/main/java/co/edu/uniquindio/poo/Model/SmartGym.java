@@ -1,5 +1,6 @@
 package co.edu.uniquindio.poo.Model;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -97,6 +98,62 @@ public class SmartGym {
             }
         }
         return total;
+    }
+
+    // Agrega estos métodos dentro de SmartGym.java:
+
+    public boolean registrarEntrenador(Entrenador entrenador) {
+        if (buscarEntrenadorPorDocumento(entrenador.getDocumentoIdentidad()) == null) {
+            entrenador.setOwnedBySmartGym(this);
+            entrenadores.add(entrenador);
+            return true;
+        }
+        return false;
+    }
+
+    public Entrenador buscarEntrenadorPorDocumento(String documento) {
+        for (Entrenador e : entrenadores) {
+            if (e.getDocumentoIdentidad().equals(documento)) {
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public boolean registrarInscripcion(Inscripcion inscripcion) {
+        if (inscripcion != null) {
+            inscripciones.add(inscripcion);
+            if (inscripcion.getCliente() != null) {
+                inscripcion.getCliente().setInscripcion(inscripcion);
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    public double calcularIngresosPeriodo(LocalDate fechaInicio, LocalDate fechaFin) {
+        if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
+            return 0.0;
+        }
+
+        double totalIngresos = 0.0;
+
+        for (Inscripcion inscripcion : inscripciones) {
+            LocalDate fechaInscripcion = inscripcion.getFecha();
+
+            if (fechaInscripcion != null) {
+                // Evalúa si la fecha de la inscripción cae dentro del período [fechaInicio, fechaFin]
+                boolean estaEnPeriodo = (fechaInscripcion.isEqual(fechaInicio) || fechaInscripcion.isAfter(fechaInicio)) &&
+                        (fechaInscripcion.isEqual(fechaFin) || fechaInscripcion.isBefore(fechaFin));
+
+                if (estaEnPeriodo) {
+                    totalIngresos += inscripcion.calcularPagoTotal();
+                }
+            }
+        }
+
+        return totalIngresos;
     }
 
     public String getNombreComercial() { return nombreComercial; }

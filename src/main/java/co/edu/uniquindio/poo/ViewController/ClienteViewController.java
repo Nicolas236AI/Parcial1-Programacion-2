@@ -4,141 +4,108 @@ import co.edu.uniquindio.poo.Model.Cliente;
 import co.edu.uniquindio.poo.Model.SmartGym;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 
 public class ClienteViewController {
 
-    @FXML private TextField txtNombreCompleto;
-    @FXML private TextField txtDocumentoIdentidad;
+    @FXML private TextField txtDocumento;
+    @FXML private TextField txtNombre;
     @FXML private TextField txtTelefono;
-    @FXML private TextField txtCorreoElectronico;
+    @FXML private TextField txtCorreo;
     @FXML private TextField txtEdad;
-    @FXML private DatePicker dpFechaRegistro;
-    @FXML private TextField txtBuscarCliente;
 
     @FXML private TableView<Cliente> tableClientes;
-    @FXML private TableColumn<Cliente, String> colNombre;
     @FXML private TableColumn<Cliente, String> colDocumento;
+    @FXML private TableColumn<Cliente, String> colNombre;
     @FXML private TableColumn<Cliente, String> colTelefono;
     @FXML private TableColumn<Cliente, String> colCorreo;
     @FXML private TableColumn<Cliente, Integer> colEdad;
 
-    private final SmartGym gimnasio = SmartGym.getInstance();
-    private final ObservableList<Cliente> listaClientes = FXCollections.observableArrayList();
-    private FilteredList<Cliente> clientesFiltrados;
+    private ObservableList<Cliente> listaClientes = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         colDocumento.setCellValueFactory(new PropertyValueFactory<>("documentoIdentidad"));
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colCorreo.setCellValueFactory(new PropertyValueFactory<>("correoElectronico"));
         colEdad.setCellValueFactory(new PropertyValueFactory<>("edad"));
 
-        listaClientes.addAll(gimnasio.getClientes());
-        clientesFiltrados = new FilteredList<>(listaClientes, p -> true);
-        tableClientes.setItems(clientesFiltrados);
-
-        txtBuscarCliente.textProperty().addListener((observable, oldValue, newValue) -> {
-            clientesFiltrados.setPredicate(cliente -> {
-                if (newValue == null || newValue.isEmpty()) return true;
-                String lower = newValue.toLowerCase();
-                return cliente.getNombreCompleto().toLowerCase().contains(lower) ||
-                        cliente.getDocumentoIdentidad().contains(lower) ||
-                        cliente.getTelefono().contains(lower);
-            });
-        });
-
-        tableClientes.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null) cargarFormulario(newSel);
-        });
+        listaClientes.addAll(SmartGym.getInstance().getClientes());
+        tableClientes.setItems(listaClientes);
     }
 
     @FXML
-    public void onRegistrar() {
+    void onRegistrarCliente(ActionEvent event) {
         try {
-            String nombre = txtNombreCompleto.getText();
-            String doc = txtDocumentoIdentidad.getText();
+            String doc = txtDocumento.getText();
+            String nombre = txtNombre.getText();
             String tel = txtTelefono.getText();
-            String correo = txtCorreoElectronico.getText();
+            String correo = txtCorreo.getText();
             int edad = Integer.parseInt(txtEdad.getText());
-            LocalDate localDate = dpFechaRegistro.getValue() != null ? dpFechaRegistro.getValue() : LocalDate.now();
-            Date fecha = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-            Cliente nuevoCliente = new Cliente(nombre, doc, tel, correo, edad, fecha, gimnasio);
-            if (gimnasio.registrarCliente(nuevoCliente)) {
-                listaClientes.add(nuevoCliente);
+            Cliente cliente = new Cliente(nombre, doc, tel, correo, edad, new Date(), SmartGym.getInstance());
+            if (SmartGym.getInstance().registrarCliente(cliente)) {
+                listaClientes.add(cliente);
                 limpiarCampos();
+                mostrarAlerta("Éxito", "Cliente registrado correctamente.");
             } else {
                 mostrarAlerta("Error", "Ya existe un cliente registrado con ese número de teléfono.");
             }
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error de formato", "Ingrese una edad numérica válida.");
         } catch (Exception e) {
-            mostrarAlerta("Datos inválidos", "Verifique que todos los campos estén correctamente diligenciados.");
+            mostrarAlerta("Error", "Verifique que todos los campos estén diligenciados.");
         }
     }
 
     @FXML
-    public void onModificar() {
+    void onModificarCliente(ActionEvent event) {
         Cliente seleccionado = tableClientes.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
-            try {
-                seleccionado.setNombreCompleto(txtNombreCompleto.getText());
-                seleccionado.setDocumentoIdentidad(txtDocumentoIdentidad.getText());
-                seleccionado.setTelefono(txtTelefono.getText());
-                seleccionado.setCorreoElectronico(txtCorreoElectronico.getText());
-                seleccionado.setEdad(Integer.parseInt(txtEdad.getText()));
-                tableClientes.refresh();
-                limpiarCampos();
-            } catch (Exception e) {
-                mostrarAlerta("Error", "Ocurrió un problema al modificar el cliente.");
-            }
+            seleccionado.setNombreCompleto(txtNombre.getText());
+            seleccionado.setCorreoElectronico(txtCorreo.getText());
+            seleccionado.setTelefono(txtTelefono.getText());
+            seleccionado.setEdad(Integer.parseInt(txtEdad.getText()));
+            tableClientes.refresh();
+            limpiarCampos();
+            mostrarAlerta("Éxito", "Cliente modificado correctamente.");
+        } else {
+            mostrarAlerta("Atención", "Seleccione un cliente de la tabla.");
         }
     }
 
     @FXML
-    public void onEliminar() {
+    void onEliminarCliente(ActionEvent event) {
         Cliente seleccionado = tableClientes.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
-            gimnasio.getClientes().remove(seleccionado);
+            SmartGym.getInstance().getClientes().remove(seleccionado);
             listaClientes.remove(seleccionado);
             limpiarCampos();
+            mostrarAlerta("Éxito", "Cliente eliminado.");
+        } else {
+            mostrarAlerta("Atención", "Seleccione un cliente de la tabla.");
         }
-    }
-
-    private void cargarFormulario(Cliente c) {
-        txtNombreCompleto.setText(c.getNombreCompleto());
-        txtDocumentoIdentidad.setText(c.getDocumentoIdentidad());
-        txtTelefono.setText(c.getTelefono());
-        txtCorreoElectronico.setText(c.getCorreoElectronico());
-        txtEdad.setText(String.valueOf(c.getEdad()));
     }
 
     private void limpiarCampos() {
-        txtNombreCompleto.clear();
-        txtDocumentoIdentidad.clear();
+        txtDocumento.clear();
+        txtNombre.clear();
         txtTelefono.clear();
-        txtCorreoElectronico.clear();
+        txtCorreo.clear();
         txtEdad.clear();
-        dpFechaRegistro.setValue(null);
-        tableClientes.getSelectionModel().clearSelection();
     }
 
-    private void mostrarAlerta(String titulo, String contenido) {
+    private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(contenido);
+        alert.setContentText(mensaje);
         alert.showAndWait();
     }
 }

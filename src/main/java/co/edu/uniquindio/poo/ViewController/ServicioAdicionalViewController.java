@@ -1,93 +1,82 @@
 package co.edu.uniquindio.poo.ViewController;
 
-import co.edu.uniquindio.poo.Model.AsesoriaNutricionalFactory;
-import co.edu.uniquindio.poo.Model.ClasesEspecialesFactory;
-import co.edu.uniquindio.poo.Model.EntrenamientoPersonalizadoFactory;
 import co.edu.uniquindio.poo.Model.ServicioAdicional;
-import co.edu.uniquindio.poo.Model.ServicioAdicionalFactory;
+import co.edu.uniquindio.poo.Model.ValoracionFisica;
 import co.edu.uniquindio.poo.Model.SmartGym;
-import co.edu.uniquindio.poo.Model.ValoracionFisicaFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class ServicioAdicionalViewController {
 
-    @FXML private ComboBox<String> cbFabricaServicio;
     @FXML private TextField txtCodigo;
     @FXML private TextField txtNombre;
     @FXML private TextField txtPrecio;
-    @FXML private CheckBox chkDisponible;
 
     @FXML private TableView<ServicioAdicional> tableServicios;
     @FXML private TableColumn<ServicioAdicional, String> colCodigo;
     @FXML private TableColumn<ServicioAdicional, String> colNombre;
     @FXML private TableColumn<ServicioAdicional, Double> colPrecio;
-    @FXML private TableColumn<ServicioAdicional, Boolean> colDisponibilidad;
 
-    private final SmartGym gimnasio = SmartGym.getInstance();
-    private final ObservableList<ServicioAdicional> listaServicios = FXCollections.observableArrayList();
+    private ObservableList<ServicioAdicional> listaServicios = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
         colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        colDisponibilidad.setCellValueFactory(new PropertyValueFactory<>("disponibilidad"));
 
-        listaServicios.addAll(gimnasio.getServiciosAdicionales());
+        listaServicios.addAll(SmartGym.getInstance().getServiciosAdicionales());
         tableServicios.setItems(listaServicios);
     }
 
+
     @FXML
-    public void onCrearServicio() {
-        String seleccion = cbFabricaServicio.getValue();
-        if (seleccion == null) {
-            mostrarAlerta("Selección vacía", "Por favor seleccione una fábrica de servicios.");
-            return;
+    void onAgregarServicio(ActionEvent event) {
+        try {
+            String codigo = txtCodigo.getText();
+            String nombre = txtNombre.getText();
+            double precio = Double.parseDouble(txtPrecio.getText());
+
+            ServicioAdicional nuevoServicio = new ValoracionFisica(
+                    codigo, nombre, "Servicio adicional registrado", precio, true, 0.0, 0.0, "Sin observaciones"
+            );
+
+            SmartGym.getInstance().getServiciosAdicionales().add(nuevoServicio);
+            listaServicios.add(nuevoServicio);
+            limpiarCampos();
+            mostrarAlerta("Éxito", "Servicio adicional agregado correctamente.");
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error de formato", "Ingrese un precio numérico válido.");
+        } catch (Exception e) {
+            mostrarAlerta("Error", "Verifique que todos los campos estén diligenciados.");
         }
+    }
 
-        ServicioAdicionalFactory factory = null;
-
-        switch (seleccion) {
-            case "Valoración Física":
-                factory = new ValoracionFisicaFactory();
-                break;
-            case "Asesoría Nutricional":
-                factory = new AsesoriaNutricionalFactory();
-                break;
-            case "Entrenamiento Personalizado":
-                factory = new EntrenamientoPersonalizadoFactory();
-                break;
-            case "Clases Especiales":
-                factory = new ClasesEspecialesFactory();
-                break;
+    @FXML
+    void onModificarServicio(ActionEvent event) {
+        ServicioAdicional seleccionado = tableServicios.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            seleccionado.setNombre(txtNombre.getText());
+            seleccionado.setPrecio(Double.parseDouble(txtPrecio.getText()));
+            tableServicios.refresh();
+            limpiarCampos();
+        } else {
+            mostrarAlerta("Atención", "Seleccione un servicio de la tabla.");
         }
+    }
 
-        if (factory != null) {
-            ServicioAdicional nuevoServicio = null;
-            if (factory instanceof ValoracionFisicaFactory) nuevoServicio = factory.crearValoracionFisica();
-            else if (factory instanceof AsesoriaNutricionalFactory) nuevoServicio = factory.crearAsesoriaNutricional();
-            else if (factory instanceof EntrenamientoPersonalizadoFactory) nuevoServicio = factory.crearEntrenamientoPerson();
-            else if (factory instanceof ClasesEspecialesFactory) nuevoServicio = factory.crearClasesEspeciales();
-
-            if (nuevoServicio != null) {
-                if (!txtCodigo.getText().isEmpty()) nuevoServicio.setCodigo(txtCodigo.getText());
-                if (!txtNombre.getText().isEmpty()) nuevoServicio.setNombre(txtNombre.getText());
-                if (!txtPrecio.getText().isEmpty()) nuevoServicio.setPrecio(Double.parseDouble(txtPrecio.getText()));
-                nuevoServicio.setDisponibilidad(chkDisponible.isSelected());
-
-                gimnasio.getServiciosAdicionales().add(nuevoServicio);
-                listaServicios.add(nuevoServicio);
-                limpiarCampos();
-            }
+    @FXML
+    void onEliminarServicio(ActionEvent event) {
+        ServicioAdicional seleccionado = tableServicios.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            SmartGym.getInstance().getServiciosAdicionales().remove(seleccionado);
+            listaServicios.remove(seleccionado);
+        } else {
+            mostrarAlerta("Atención", "Seleccione un servicio de la tabla.");
         }
     }
 
@@ -95,15 +84,13 @@ public class ServicioAdicionalViewController {
         txtCodigo.clear();
         txtNombre.clear();
         txtPrecio.clear();
-        chkDisponible.setSelected(false);
-        cbFabricaServicio.getSelectionModel().clearSelection();
     }
 
-    private void mostrarAlerta(String titulo, String msg) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(msg);
+        alert.setContentText(mensaje);
         alert.showAndWait();
     }
 }

@@ -2,18 +2,17 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.geometry.*?>
 
-<VBox spacing="20" style="-fx-background-color: #040607; -fx-padding: 20px;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox spacing="20" style="-fx-background-color: #040607; -fx-padding: 20px;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="co.edu.uniquindio.poo.ViewController.ReportesViewController">
     <Label text="Consultas Especiales y Reportes del Sistema" style="-fx-text-fill: #BF40FA; -fx-font-size: 20px; -fx-font-weight: bold;" />
 
     <VBox style="-fx-background-color: #5B2A62; -fx-padding: 18px; -fx-background-radius: 12px;" spacing="12">
         <Label text="1. Búsqueda de Cliente por Teléfono y Validación de Número Perfecto" style="-fx-text-fill: #BF40FA; -fx-font-size: 14px; -fx-font-weight: bold;" />
         <HBox spacing="15">
-            <TextField promptText="Ingrese número telefónico..." style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-pref-width: 240px;" />
-            <Button text="Buscar y Validar" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
+            <TextField fx:id="txtTelefono" promptText="Ingrese número telefónico o valor..." style="-fx-background-color: #040607; -fx-text-fill: #E3D9FC; -fx-prompt-text-fill: #8a7c93; -fx-background-radius: 6px; -fx-pref-width: 240px;" />
+            <Button text="Buscar y Validar" onAction="#onBuscarYValidar" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
         </HBox>
-        <Label text="Resultado del sistema: [Esperando consulta...]" style="-fx-text-fill: #E3D9FC; -fx-font-style: italic;" />
+        <Label fx:id="lblResultadoCliente" text="Resultado del sistema: [Esperando consulta...]" style="-fx-text-fill: #E3D9FC; -fx-font-style: italic;" wrapText="true" />
     </VBox>
 
     <Separator style="-fx-background-color: #4928C2;" />
@@ -21,13 +20,13 @@
     <VBox style="-fx-background-color: #5B2A62; -fx-padding: 18px; -fx-background-radius: 12px;" spacing="12">
         <Label text="2. Cálculo de Ingresos de Planes por Periodo" style="-fx-text-fill: #BF40FA; -fx-font-size: 14px; -fx-font-weight: bold;" />
         <HBox spacing="15">
-            <DatePicker promptText="Fecha Inicio" style="-fx-background-color: #040607;" />
-            <DatePicker promptText="Fecha Fin" style="-fx-background-color: #040607;" />
-            <Button text="Calcular Ingresos" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
+            <DatePicker fx:id="dpFechaInicio" promptText="Fecha Inicio" style="-fx-background-color: #040607;" />
+            <DatePicker fx:id="dpFechaFin" promptText="Fecha Fin" style="-fx-background-color: #040607;" />
+            <Button text="Calcular Ingresos" onAction="#onCalcularIngresos" style="-fx-background-color: #4928C2; -fx-text-fill: #E3D9FC; -fx-font-weight: bold; -fx-background-radius: 6px; -fx-padding: 8px 16px; -fx-cursor: hand;" />
         </HBox>
         <HBox spacing="10" alignment="CENTER_LEFT">
             <Label text="Total Ingresos Periodo:" style="-fx-text-fill: #E3D9FC; -fx-font-size: 14px;" />
-            <Label text="\$0.00" style="-fx-text-fill: #BF40FA; -fx-font-size: 15px; -fx-font-weight: bold;" />
+            <Label fx:id="lblTotalIngresos" text="\$0.00" style="-fx-text-fill: #BF40FA; -fx-font-size: 15px; -fx-font-weight: bold;" />
         </HBox>
     </VBox>
 </VBox>

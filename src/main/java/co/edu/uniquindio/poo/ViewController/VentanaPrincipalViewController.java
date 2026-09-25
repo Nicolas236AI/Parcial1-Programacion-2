@@ -8,14 +8,11 @@ import java.io.IOException;
 
 public class VentanaPrincipalViewController {
 
-    // Resuelve la advertencia "Unresolved fx:id reference"
-    @FXML
-    private BorderPane mainBorderPane;
+    @FXML private BorderPane mainBorderPane;
 
-    // Resuelven los errores "Cannot resolve symbol"
     @FXML
     public void onMostrarDashboard() {
-        // Carga la vista inicial del dashboard si la tienes por separado
+
     }
 
     @FXML

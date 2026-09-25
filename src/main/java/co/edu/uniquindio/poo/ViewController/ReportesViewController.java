@@ -2,10 +2,9 @@ package co.edu.uniquindio.poo.ViewController;
 
 import co.edu.uniquindio.poo.Model.Cliente;
 import co.edu.uniquindio.poo.Model.SmartGym;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,55 +12,80 @@ import java.util.Date;
 
 public class ReportesViewController {
 
-    @FXML private TextField txtTelefonoBusqueda;
-    @FXML private Label lblResultadoBusqueda;
+    @FXML private TextField txtTelefono;
+    @FXML private Label lblResultadoCliente;
 
     @FXML private DatePicker dpFechaInicio;
     @FXML private DatePicker dpFechaFin;
     @FXML private Label lblTotalIngresos;
 
-    private final SmartGym gimnasio = SmartGym.getInstance();
-
+    /**
+     * Busca al cliente por teléfono y evalúa si el valor ingresado es un número perfecto
+     */
     @FXML
-    public void onBuscarYValidar() {
-        String telefono = txtTelefonoBusqueda.getText();
-        if (telefono == null || telefono.trim().isEmpty()) {
-            lblResultadoBusqueda.setText("Resultado: Ingrese un número telefónico.");
+    void onBuscarYValidar(ActionEvent event) {
+        String telefono = txtTelefono.getText().trim();
+
+        if (telefono.isEmpty()) {
+            lblResultadoCliente.setText("Resultado del sistema: Por favor ingrese un número de teléfono o valor.");
             return;
         }
 
-        Cliente cliente = gimnasio.buscarClientePorTelefono(telefono);
-        if (cliente == null) {
-            lblResultadoBusqueda.setText("Resultado: No se encontró ningún cliente con ese teléfono.");
-            return;
-        }
 
+        Cliente cliente = SmartGym.getInstance().buscarClientePorTelefono(telefono);
+
+        String mensajePerfecto = "";
         try {
-            int numTel = Integer.parseInt(telefono.replaceAll("[^0-9]", ""));
-            boolean esPerfecto = gimnasio.esNumeroPerfecto(numTel);
-            String textoPerfecto = esPerfecto ? "y su número ES PERFECTO." : "y su número NO es perfecto.";
-
-            lblResultadoBusqueda.setText(String.format("Cliente: %s | Tel: %s (%s)",
-                    cliente.getNombreCompleto(), cliente.getTelefono(), textoPerfecto));
+            int numero = Integer.parseInt(telefono);
+            boolean esPerfecto = SmartGym.getInstance().esNumeroPerfecto(numero);
+            mensajePerfecto = esPerfecto
+                    ? " ¡El número " + numero + " ES un número perfecto!"
+                    : " El número " + numero + " NO es un número perfecto.";
         } catch (NumberFormatException e) {
-            lblResultadoBusqueda.setText(String.format("Cliente: %s | Teléfono no numérico para evaluación.", cliente.getNombreCompleto()));
+            mensajePerfecto = " (El valor ingresado no es un número entero válido para la prueba de número perfecto).";
+        }
+
+
+        if (cliente != null) {
+            lblResultadoCliente.setText("Cliente encontrado: " + cliente.getNombreCompleto() +
+                    " (Doc: " + cliente.getDocumentoIdentidad() + ")." + mensajePerfecto);
+        } else {
+            lblResultadoCliente.setText("No se encontró ningún cliente con el teléfono '" + telefono + "'." + mensajePerfecto);
         }
     }
 
+    /**
+     * Calcula los ingresos generados por las inscripciones dentro del rango de fechas
+     */
     @FXML
-    public void onCalcularIngresos() {
-        LocalDate inicio = dpFechaInicio.getValue();
-        LocalDate fin = dpFechaFin.getValue();
+    void onCalcularIngresos(ActionEvent event) {
+        LocalDate fInicio = dpFechaInicio.getValue();
+        LocalDate fFin = dpFechaFin.getValue();
 
-        if (inicio == null || fin == null) {
-            lblTotalIngresos.setText("$0.00 (Seleccione ambas fechas)");
+        if (fInicio == null || fFin == null) {
+            mostrarAlerta("Fechas requeridas", "Por favor seleccione ambas fechas (Inicio y Fin).");
             return;
         }
 
-        Date dateInicio = Date.from(inicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date dateFin = Date.from(fin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        if (fInicio.isAfter(fFin)) {
+            mostrarAlerta("Rango inválido", "La fecha de inicio no puede ser posterior a la fecha final.");
+            return;
+        }
 
-        double total = gimnasio.calcularIngresosPeriodo(dateInicio, dateFin);
-        lblTotalIngresos.setText(String.format("$%.2f", total));
+        // Convertir LocalDate a java.util.Date para ser compatible con SmartGym
+        Date inicio = Date.from(fInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date fin = Date.from(fFin.atTime(23, 59, 59).atZone(ZoneId.systemDefault()).toInstant());
+
+        // Invocar el cálculo desde la clase modelo SmartGym
+        double total = SmartGym.getInstance().calcularIngresosPeriodo(inicio, fin);
+        lblTotalIngresos.setText(String.format("$%,.2f", total));
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }

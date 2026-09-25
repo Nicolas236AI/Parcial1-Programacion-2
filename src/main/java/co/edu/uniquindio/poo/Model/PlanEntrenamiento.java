@@ -8,15 +8,6 @@ public abstract class PlanEntrenamiento implements Plan {
     private double valorMensual;
     private EstadoPlanEntrenamiento estado;
 
-    /**
-     * metodo constructor de PlanEntrenamiento
-     * @param codigo
-     * @param nombre
-     * @param descripcion
-     * @param duracionMeses
-     * @param valorMensual
-     * @param estado
-     */
     public PlanEntrenamiento(String codigo, String nombre, String descripcion, int duracionMeses, double valorMensual, EstadoPlanEntrenamiento estado) {
         this.codigo = codigo;
         this.nombre = nombre;
@@ -27,15 +18,11 @@ public abstract class PlanEntrenamiento implements Plan {
     }
 
     /**
-     * Metodo que sirve para calcular el valor final del plan de entrenamiento
-     * @return double con el valor final
+     * Método abstracto que es implementado por las subclases (Basico, Personalizado, Premium)
+     * para calcular el valor total según la duración en meses y los recargos/descuentos aplicables.
      */
     public abstract double calcularValorFinalPlan();
 
-    /**
-     * Sobreescritura del metodo de la interfaz que sirve para clonar el plan  de entenamiento
-     * @return
-     */
     @Override
     public abstract Plan clonar();
 

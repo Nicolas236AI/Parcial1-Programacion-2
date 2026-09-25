@@ -14,7 +14,7 @@ public class Inscripcion {
     private SmartGym ownedBySmartGym;
 
     /**
-     * metodo constructor de Inscripcion
+     * Método constructor privado para el patrón Builder
      */
     private Inscripcion(Builder builder) {
         this.codigo = builder.codigo;
@@ -28,22 +28,45 @@ public class Inscripcion {
     }
 
     /**
-     * Metodo que sirve para calcular el pago total de la inscripcion sumando el plan y los servicios adicionales
-     * @return double
+     * Calcula el pago total sumando el valor final del plan (el cual ya incluye su duración en meses)
+     * y los precios de los servicios adicionales seleccionados.
+     * @return double con el valor total a pagar
      */
-    public double cacularPagoTotal() {
-        double totalPlan = plan != null ? plan.calcularValorFinalPlan() : 0.0;
-        double totalAdicionales = 0.0;
+    public double calcularPagoTotal() {
+        double valorPlan = (plan != null) ? plan.calcularValorFinalPlan() : 0.0;
+        double valorServicios = 0.0;
+
         if (listaServiciosAdicionales != null) {
             for (ServicioAdicional servicio : listaServiciosAdicionales) {
-                totalAdicionales += servicio.getPrecio();
+                if (servicio != null) {
+                    valorServicios += servicio.getPrecio();
+                }
             }
         }
-        return totalPlan + totalAdicionales;
+
+        return valorPlan + valorServicios;
     }
 
     /**
-     * Clase Builder interna para la construccion flexible de Inscripcion
+     * Método para mantener compatibilidad con llamados existentes en SmartGym
+     */
+    public double cacularPagoTotal() {
+        return calcularPagoTotal();
+    }
+
+    /**
+     * Obtiene la fecha de finalización calculada automáticamente sumando los meses del plan a la fecha de inicio
+     * @return LocalDate de finalización
+     */
+    public LocalDate getFechaFin() {
+        if (fecha != null && plan != null && plan.getDuracionMeses() > 0) {
+            return fecha.plusMonths(plan.getDuracionMeses());
+        }
+        return fecha;
+    }
+
+    /**
+     * Clase Builder interna para la construcción flexible de Inscripcion
      */
     public static class Builder {
         private String codigo;
@@ -100,6 +123,7 @@ public class Inscripcion {
         }
     }
 
+    // Getters y Setters
     public String getCodigo() {
         return codigo;
     }
@@ -170,6 +194,7 @@ public class Inscripcion {
                 "codigo='" + codigo + '\'' +
                 ", fecha=" + fecha +
                 ", estado=" + estado +
+                ", pagoTotal=" + calcularPagoTotal() +
                 '}';
     }
 }

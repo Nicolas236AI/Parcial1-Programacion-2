@@ -4,123 +4,124 @@ import co.edu.uniquindio.poo.Model.Entrenador;
 import co.edu.uniquindio.poo.Model.SmartGym;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.time.LocalDate;
 
 public class EntrenadorViewController {
 
-    @FXML private TextField txtIdentificacion;
-    @FXML private TextField txtNombreCompleto;
-    @FXML private TextField txtEspecialidad;
+    @FXML private TextField txtDocumento;
+    @FXML private TextField txtNombre;
     @FXML private TextField txtTelefono;
-    @FXML private TextField txtCorreoElectronico;
+    @FXML private TextField txtCorreo;
+    @FXML private TextField txtTarifa;
     @FXML private DatePicker dpFechaRegistro;
-    @FXML private TextField txtTarifaSesion;
-    @FXML private TextField txtBuscarEntrenador;
 
     @FXML private TableView<Entrenador> tableEntrenadores;
-    @FXML private TableColumn<Entrenador, String> colIdentificacion;
+    @FXML private TableColumn<Entrenador, String> colDocumento;
     @FXML private TableColumn<Entrenador, String> colNombre;
-    @FXML private TableColumn<Entrenador, String> colEspecialidad;
+    @FXML private TableColumn<Entrenador, String> colTelefono;
+    @FXML private TableColumn<Entrenador, String> colCorreo;
     @FXML private TableColumn<Entrenador, Double> colTarifa;
+    @FXML private TableColumn<Entrenador, LocalDate> colFecha;
 
-    private final SmartGym gimnasio = SmartGym.getInstance();
-    private final ObservableList<Entrenador> listaEntrenadores = FXCollections.observableArrayList();
-    private FilteredList<Entrenador> entrenadoresFiltrados;
+    private ObservableList<Entrenador> listaEntrenadores = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        colIdentificacion.setCellValueFactory(new PropertyValueFactory<>("documentoIdentidad"));
+        colDocumento.setCellValueFactory(new PropertyValueFactory<>("documentoIdentidad"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
+        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correoElectronico"));
         colTarifa.setCellValueFactory(new PropertyValueFactory<>("tarifaSesion"));
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaRegistro"));
 
-        listaEntrenadores.addAll(gimnasio.getEntrenadores());
-        entrenadoresFiltrados = new FilteredList<>(listaEntrenadores, p -> true);
-        tableEntrenadores.setItems(entrenadoresFiltrados);
-
-        txtBuscarEntrenador.textProperty().addListener((observable, oldValue, newValue) -> {
-            entrenadoresFiltrados.setPredicate(e -> {
-                if (newValue == null || newValue.isEmpty()) return true;
-                String lower = newValue.toLowerCase();
-                return e.getNombreCompleto().toLowerCase().contains(lower) ||
-                        e.getDocumentoIdentidad().contains(lower);
-            });
-        });
-
-        tableEntrenadores.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-            if (newSel != null) cargarFormulario(newSel);
-        });
+        listaEntrenadores.addAll(SmartGym.getInstance().getEntrenadores());
+        tableEntrenadores.setItems(listaEntrenadores);
     }
 
     @FXML
-    public void onGuardar() {
+    void onRegistrarEntrenador(ActionEvent event) {
         try {
-            String doc = txtIdentificacion.getText();
-            String nombre = txtNombreCompleto.getText();
+            String doc = txtDocumento.getText();
+            String nombre = txtNombre.getText();
             String tel = txtTelefono.getText();
-            String correo = txtCorreoElectronico.getText();
+            String correo = txtCorreo.getText();
+            double tarifa = Double.parseDouble(txtTarifa.getText());
             LocalDate fecha = dpFechaRegistro.getValue() != null ? dpFechaRegistro.getValue() : LocalDate.now();
-            double tarifa = Double.parseDouble(txtTarifaSesion.getText());
 
-            Entrenador nuevo = new Entrenador(nombre, doc, tel, correo, fecha, tarifa, gimnasio);
-            gimnasio.getEntrenadores().add(nuevo);
-            listaEntrenadores.add(nuevo);
+            if (doc.isEmpty() || nombre.isEmpty()) {
+                mostrarAlerta("Campos vacíos", "Por favor ingrese al menos documento y nombre.");
+                return;
+            }
+
+            Entrenador entrenador = new Entrenador(nombre, doc, tel, correo, fecha, tarifa, SmartGym.getInstance());
+
+            SmartGym.getInstance().getEntrenadores().add(entrenador);
+
+            listaEntrenadores.add(entrenador);
+
             limpiarCampos();
+            mostrarAlerta("Éxito", "Entrenador guardado correctamente.");
+
+        } catch (NumberFormatException e) {
+            mostrarAlerta("Error de formato", "Ingrese un valor numérico válido para la tarifa.");
         } catch (Exception e) {
-            mostrarAlerta("Error de Ingreso", "Compruebe que los campos numéricos sean correctos.");
+            mostrarAlerta("Error", "Error al registrar el entrenador: " + e.getMessage());
         }
     }
 
     @FXML
-    public void onActualizar() {
+    void onModificarEntrenador(ActionEvent event) {
         Entrenador seleccionado = tableEntrenadores.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
-            try {
-                seleccionado.setNombreCompleto(txtNombreCompleto.getText());
-                seleccionado.setDocumentoIdentidad(txtIdentificacion.getText());
-                seleccionado.setTelefono(txtTelefono.getText());
-                seleccionado.setCorreoElectronico(txtCorreoElectronico.getText());
-                seleccionado.setTarifaSesion(Double.parseDouble(txtTarifaSesion.getText()));
-                tableEntrenadores.refresh();
-                limpiarCampos();
-            } catch (Exception e) {
-                mostrarAlerta("Error", "Ocurrió un fallo al actualizar los datos.");
+            seleccionado.setNombreCompleto(txtNombre.getText());
+            seleccionado.setTelefono(txtTelefono.getText());
+            seleccionado.setCorreoElectronico(txtCorreo.getText());
+            if (!txtTarifa.getText().isEmpty()) {
+                seleccionado.setTarifaSesion(Double.parseDouble(txtTarifa.getText()));
             }
+            if (dpFechaRegistro.getValue() != null) {
+                seleccionado.setFechaRegistro(dpFechaRegistro.getValue());
+            }
+            tableEntrenadores.refresh();
+            limpiarCampos();
+            mostrarAlerta("Éxito", "Entrenador modificado correctamente.");
+        } else {
+            mostrarAlerta("Atención", "Seleccione un entrenador de la tabla.");
         }
     }
 
-    private void cargarFormulario(Entrenador e) {
-        txtIdentificacion.setText(e.getDocumentoIdentidad());
-        txtNombreCompleto.setText(e.getNombreCompleto());
-        txtTelefono.setText(e.getTelefono());
-        txtCorreoElectronico.setText(e.getCorreoElectronico());
-        txtTarifaSesion.setText(String.valueOf(e.getTarifaSesion()));
+    @FXML
+    void onEliminarEntrenador(ActionEvent event) {
+        Entrenador seleccionado = tableEntrenadores.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            SmartGym.getInstance().getEntrenadores().remove(seleccionado);
+            listaEntrenadores.remove(seleccionado);
+            limpiarCampos();
+            mostrarAlerta("Éxito", "Entrenador eliminado.");
+        } else {
+            mostrarAlerta("Atención", "Seleccione un entrenador de la tabla.");
+        }
     }
 
     private void limpiarCampos() {
-        txtIdentificacion.clear();
-        txtNombreCompleto.clear();
-        txtEspecialidad.clear();
+        txtDocumento.clear();
+        txtNombre.clear();
         txtTelefono.clear();
-        txtCorreoElectronico.clear();
-        txtTarifaSesion.clear();
+        txtCorreo.clear();
+        txtTarifa.clear();
         dpFechaRegistro.setValue(null);
-        tableEntrenadores.getSelectionModel().clearSelection();
     }
 
-    private void mostrarAlerta(String titulo, String contenido) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(contenido);
+        alert.setContentText(mensaje);
         alert.showAndWait();
     }
 }
